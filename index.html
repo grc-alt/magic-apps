@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,11 +8,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-
+  
 <title>Generador</title>
 
 <style>
-
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -32,10 +32,11 @@ body {
   align-items: center;
 }
 
-/* Rectángulo de tamaño fijo */
+/* Rectángulo para colocar la baraja */
 #card-area {
-  width: 283.5px;
-  height: 396.9px;
+  width: 65vw;
+  max-width: 300px;
+  aspect-ratio: 2.5 / 3.5;
 
   border: 2px solid white;
   border-radius: 8px;
@@ -51,10 +52,10 @@ body {
   font-weight: bold;
 }
 
+/* Número generado */
 #number {
   text-align: center;
 }
-
 </style>
 </head>
 
@@ -105,4 +106,3 @@ document.addEventListener("click", function(event) {
 
 </body>
 </html>
-
