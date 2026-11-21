@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,13 +37,29 @@ body {
   aspect-ratio: 1 / 1;
   visibility: visible;
 }
+
+#control {
+  position: fixed;
+  bottom: calc(25px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 12px 35px;
+  background: black;
+  color: white;
+  border: 2px solid white;
+  border-radius: 6px;
+
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
 </style>
 </head>
 
 <body>
 
 <svg id="arrow" viewBox="0 0 200 200">
-
   <path
     d="M100 12
        L55 85
@@ -55,38 +71,100 @@ body {
        Z"
     fill="white"
   />
-
 </svg>
+
+<button id="control">INIT</button>
 
 <script>
 
 const arrow = document.getElementById("arrow");
+const control = document.getElementById("control");
 
-let changing = false;
+let running = false;
+let interval = null;
 
-document.addEventListener("click", function() {
+let leftCount = 0;
+let rightCount = 0;
 
-  if (changing) return;
+const MAX_DIFFERENCE = 4;
 
-  changing = true;
+function changeDirection() {
+
+  let direction;
+
+  const difference = rightCount - leftCount;
+
+  if (difference >= MAX_DIFFERENCE) {
+    // Demasiadas apariciones a la derecha
+    direction = "left";
+
+  } else if (difference <= -MAX_DIFFERENCE) {
+    // Demasiadas apariciones a la izquierda
+    direction = "right";
+
+  } else {
+    // Probabilidad del 50%
+    direction = Math.random() < 0.5 ? "left" : "right";
+  }
+
+  // Actualizar contadores
+  if (direction === "left") {
+    leftCount++;
+  } else {
+    rightCount++;
+  }
 
   // Ocultar flecha
   arrow.style.visibility = "hidden";
 
-  // Seleccionar dirección aleatoria
-  const direction = Math.random() < 0.5 ? -45 : 45;
-
   setTimeout(function() {
 
-    // Cambiar dirección
-    arrow.style.transform = `rotate(${direction}deg)`;
+    // Girar 45 grados
+    const angle = direction === "left" ? -45 : 45;
+
+    arrow.style.transform = `rotate(${angle}deg)`;
 
     // Mostrar flecha
     arrow.style.visibility = "visible";
 
-    changing = false;
-
   }, 150);
+}
+
+function start() {
+
+  if (running) return;
+
+  running = true;
+  control.textContent = "STOP";
+
+  // Primera dirección inmediatamente
+  changeDirection();
+
+  // Cambiar automáticamente cada segundo
+  interval = setInterval(changeDirection, 1000);
+}
+
+function stop() {
+
+  running = false;
+
+  clearInterval(interval);
+  interval = null;
+
+  // Reiniciar contadores
+  leftCount = 0;
+  rightCount = 0;
+
+  control.textContent = "INIT";
+}
+
+control.addEventListener("click", function() {
+
+  if (running) {
+    stop();
+  } else {
+    start();
+  }
 
 });
 
@@ -94,3 +172,4 @@ document.addEventListener("click", function() {
 
 </body>
 </html>
+```
