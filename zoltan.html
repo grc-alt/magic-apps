@@ -56,6 +56,16 @@ body {
 #number {
   text-align: center;
 }
+
+#copyright {
+  position: fixed;
+  right: 15px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  color: white;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+}
+
 </style>
 </head>
 
@@ -64,7 +74,9 @@ body {
 <div id="card-area">
   <span id="number"></span>
 </div>
-
+  
+<div id="copyright">GRC Magic Apps Inc.</div>
+  
 <script>
 
 const numberDisplay = document.getElementById("number");
