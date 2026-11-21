@@ -41,7 +41,7 @@ body {
   width: 100%;
   height: 100%;
   transform: rotate(0deg);
-  transition: transform 0.35s ease-in-out;
+  transition: transform 3s cubic-bezier(0.15, 0.65, 0.15, 1);
 }
 </style>
 </head>
@@ -52,7 +52,6 @@ body {
 
   <svg id="arrow" viewBox="0 0 200 200">
 
-    <!-- Doble flecha -->
     <path
       d="M100 12
          L75 48
@@ -76,17 +75,35 @@ body {
 
 const arrow = document.getElementById("arrow");
 
-// Seis posiciones: 12, 1, 2, 3, 4, 5
-let position = 0;
+let currentAngle = 0;
+let spinning = false;
 
-// Cada pulsación avanza 30 grados
 document.addEventListener("click", function() {
 
-  position = (position + 1) % 6;
+  // Evitar nuevas pulsaciones durante el giro
+  if (spinning) return;
 
-  const angle = position * 30;
+  spinning = true;
 
-  arrow.style.transform = `rotate(${angle}deg)`;
+  // Posición aleatoria: 0, 30, 60, 90, 120 o 150 grados
+  const destination = Math.floor(Math.random() * 6) * 30;
+
+  // Entre 3 y 6 vueltas completas
+  const turns = 3 + Math.floor(Math.random() * 4);
+
+  // Calcular el giro necesario
+  const currentPosition = currentAngle % 360;
+  const adjustment = (destination - currentPosition + 360) % 360;
+
+  currentAngle += turns * 360 + adjustment;
+
+  // Aplicar giro
+  arrow.style.transform = `rotate(${currentAngle}deg)`;
+
+  // Permitir otra pulsación al terminar
+  setTimeout(function() {
+    spinning = false;
+  }, 3000);
 
 });
 
@@ -94,3 +111,4 @@ document.addEventListener("click", function() {
 
 </body>
 </html>
+
