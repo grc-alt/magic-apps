@@ -2,95 +2,104 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <title>Generador</title>
+<title>Generador</title>
 
-  <meta name="theme-color" content="#111827">
-  <meta name="description" content="Generador de números del 1 al 52">
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  <!-- Configuración PWA -->
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+body {
+  margin: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #111827;
+  font-family: Arial, sans-serif;
+  user-select: none;
+  touch-action: manipulation;
 
-  <!-- Compatibilidad iPhone/iPad -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Generador">
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+/* Rectángulo para colocar la baraja */
+#card-area {
+  width: 65vw;
+  max-width: 300px;
+  aspect-ratio: 2.5 / 3.5;
 
-    body {
-      margin: 0;
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      background: #111827;
-      color: white;
-      font-family: Arial, sans-serif;
-      user-select: none;
-      touch-action: manipulation;
-    }
+  border: 2px solid white;
+  border-radius: 8px;
 
-    #screen {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(100px, 30vw, 180px);
-      font-weight: bold;
-    }
-  </style>
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 90px;
+  font-weight: bold;
+}
+
+/* Número generado */
+#number {
+  text-align: center;
+}
+</style>
 </head>
 
 <body>
 
-  <div id="screen"></div>
+<div id="card-area">
+  <span id="number"></span>
+</div>
 
-  <script>
-    const screen = document.getElementById("screen");
+<script>
 
-    function show(number) {
-      screen.textContent = number;
+const numberDisplay = document.getElementById("number");
+
+function show(number) {
+  numberDisplay.textContent = number;
+}
+
+document.addEventListener("click", function(event) {
+
+  const x = event.clientX;
+  const y = event.clientY;
+
+  const width = window.innerWidth;
+
+  // Zona superior: 20% de la pantalla
+  if (y < window.innerHeight * 0.20) {
+
+    if (x < width / 3) {
+      show(6);
+    }
+    else if (x < width * 2 / 3) {
+      show(16);
+    }
+    else {
+      show(26);
     }
 
-    document.addEventListener("click", function(event) {
-      const x = event.clientX;
-      const y = event.clientY;
+  } else {
 
-      const width = window.innerWidth;
+    // Número aleatorio entre 1 y 52
+    show(Math.floor(Math.random() * 52) + 1);
 
-      if (y < window.innerHeight * 0.20) {
+  }
 
-        if (x < width / 3) {
-          show(6);
-        }
-        else if (x < width * 2 / 3) {
-          show(16);
-        }
-        else {
-          show(26);
-        }
+});
 
-      } else {
-        show(Math.floor(Math.random() * 52) + 1);
-      }
-    });
-
-    // Registrar Service Worker
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js")
-          .catch(error => console.error("Error PWA:", error));
-      });
-    }
-  </script>
+</script>
 
 </body>
 </html>
+
