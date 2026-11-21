@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<title>Generador</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #111827;
+  font-family: Arial, sans-serif;
+  user-select: none;
+  touch-action: manipulation;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Rectángulo para colocar la baraja */
+#card-area {
+  width: 65vw;
+  max-width: 300px;
+  aspect-ratio: 2.5 / 3.5;
+
+  border: 2px solid white;
+  border-radius: 8px;
+
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 90px;
+  font-weight: bold;
+}
+
+/* Número generado */
+#number {
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div id="card-area">
+  <span id="number"></span>
+</div>
+
+<script>
+
+const numberDisplay = document.getElementById("number");
+
+// Combinaciones de la zona superior
+const sequences = [
+  [6, 15, 24],
+  [5, 14, 23],
+  [4, 13, 22]
+];
+
+// Estado de la aplicación
+let currentSequence = 0;
+let outsideTaps = 0;
+
+// Mostrar número
+function show(number) {
+  numberDisplay.textContent = number;
+}
+
+document.addEventListener("click", function(event) {
+
+  const x = event.clientX;
+  const y = event.clientY;
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  // Zona superior: 20% de la pantalla
+  if (y < height * 0.20) {
+
+    // Reiniciar contador de pulsaciones exteriores
+    outsideTaps = 0;
+
+    // Seleccionar número según posición horizontal
+    const currentNumbers = sequences[currentSequence];
+
+    if (x < width / 3) {
+      show(currentNumbers[0]);
+    }
+    else if (x < width * 2 / 3) {
+      show(currentNumbers[1]);
+    }
+    else {
+      show(currentNumbers[2]);
+    }
+
+    // Avanzar a la siguiente combinación
+    currentSequence = (currentSequence + 1) % sequences.length;
+
+  } else {
+
+    // Número aleatorio entre 1 y 52
+    show(Math.floor(Math.random() * 52) + 1);
+
+    // Contar pulsaciones consecutivas fuera de la zona superior
+    outsideTaps++;
+
+    // Al llegar a cinco, reiniciar la secuencia
+    if (outsideTaps >= 5) {
+      currentSequence = 0;
+      outsideTaps = 0;
+    }
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
