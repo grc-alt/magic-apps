@@ -1,0 +1,20 @@
+
+{
+  "name": "Generador de números",
+  "short_name": "Generador",
+  "description": "Generador de números del 1 al 52",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
