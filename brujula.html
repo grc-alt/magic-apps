@@ -43,15 +43,24 @@ body {
   transform: rotate(0deg);
   transition: transform 3s cubic-bezier(0.15, 0.65, 0.15, 1);
 }
+
+/* Zona invisible de reinicio */
+#reset-area {
+  position: fixed;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 15%;
+  background: transparent;
+  z-index: 10;
+}
 </style>
 </head>
 
 <body>
 
 <div id="compass">
-
   <svg id="arrow" viewBox="0 0 200 200">
-
     <path
       d="M100 12
          L75 48
@@ -66,41 +75,115 @@ body {
          Z"
       fill="white"
     />
-
   </svg>
-
 </div>
+
+<div id="reset-area"></div>
 
 <script>
 
 const arrow = document.getElementById("arrow");
+const resetArea = document.getElementById("reset-area");
 
 let currentAngle = 0;
 let spinning = false;
 
-document.addEventListener("click", function() {
+// Contador de apariciones de cada posición
+let counts = [0, 0, 0, 0, 0, 0];
 
-  // Evitar nuevas pulsaciones durante el giro
+// Obtener posiciones disponibles
+function getAvailablePositions() {
+
+  const available = [];
+
+  // La posición 0 puede salir una primera vez siempre.
+  // Para volver a salir, las posiciones 1-5
+  // deben haber salido al menos dos veces.
+  const allowSecondZero = counts.slice(1).every(count => count >= 2);
+
+  for (let i = 0; i < 6; i++) {
+
+    // Máximo tres apariciones por ciclo
+    if (counts[i] >= 3) continue;
+
+    // Restricción especial para la posición 0
+    if (i === 0 && counts[0] >= 1 && !allowSecondZero) {
+      continue;
+    }
+
+    available.push(i);
+  }
+
+  return available;
+}
+
+// Reiniciar todo el comportamiento
+function resetCycle() {
+
+  counts = [0, 0, 0, 0, 0, 0];
+
+  currentAngle = 0;
+
+  arrow.style.transition = "none";
+  arrow.style.transform = "rotate(0deg)";
+
+  // Forzar actualización visual antes de restaurar animación
+  arrow.getBoundingClientRect();
+
+  arrow.style.transition =
+    "transform 3s cubic-bezier(0.15, 0.65, 0.15, 1)";
+
+  spinning = false;
+}
+
+// Reiniciar al tocar la zona inferior central
+resetArea.addEventListener("click", function(event) {
+  event.stopPropagation();
+  resetCycle();
+});
+
+// Girar al tocar el resto de la pantalla
+document.addEventListener("click", function(event) {
+
+  // Ignorar toques durante el giro
   if (spinning) return;
+
+  // Ignorar la zona de reinicio
+  if (resetArea.contains(event.target)) return;
 
   spinning = true;
 
-  // Posición aleatoria: 0, 30, 60, 90, 120 o 150 grados
-  const destination = Math.floor(Math.random() * 6) * 30;
+  let available = getAvailablePositions();
 
-  // Entre 3 y 6 vueltas completas
+  // Si no quedan posiciones, comenzar un nuevo ciclo
+  if (available.length === 0) {
+    resetCycle();
+    spinning = true;
+    available = getAvailablePositions();
+  }
+
+  // Elegir posición aleatoria
+  const randomIndex = Math.floor(Math.random() * available.length);
+  const destination = available[randomIndex];
+
+  // Registrar aparición
+  counts[destination]++;
+
+  // Calcular giro
+  const destinationAngle = destination * 30;
+
   const turns = 3 + Math.floor(Math.random() * 4);
 
-  // Calcular el giro necesario
   const currentPosition = currentAngle % 360;
-  const adjustment = (destination - currentPosition + 360) % 360;
+
+  const adjustment =
+    (destinationAngle - currentPosition + 360) % 360;
 
   currentAngle += turns * 360 + adjustment;
 
-  // Aplicar giro
   arrow.style.transform = `rotate(${currentAngle}deg)`;
 
-  // Permitir otra pulsación al terminar
+  // Liberar al terminar
   setTimeout(function() {
     spinning = false;
   }, 3000);
@@ -111,4 +194,5 @@ document.addEventListener("click", function() {
 
 </body>
 </html>
+
 
